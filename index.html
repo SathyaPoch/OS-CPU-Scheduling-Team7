@@ -2,8 +2,151 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CPU Scheduling Stimulator</title>
+    <title>CPU Algorithm Stimulator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inika:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
-  <body></body>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1 class="bebas-neue-regular">CPU Stimulating Algorithm Calculator</h1>
+      </header>
+
+      <div class="panel">
+        <div class="panel-title">
+          <span>process table</span>
+          <span id="procCount">0 processes</span>
+        </div>
+        <table id="procTable">
+          <thead>
+            <tr>
+              <th>PID</th>
+              <th>Arrival</th>
+              <th>Burst</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="procBody"></tbody>
+        </table>
+        <div class="controls">
+          <button onclick="addRow()">Add Process</button>
+          <button onclick="loadSample()">Example Scenario</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><span>Run configuration</span></div>
+        <div class="controls">
+          <div class="field">
+            <label>Algorithm</label>
+            <select id="algoSelect">
+              <option value="fcfs">FCFS</option>
+              <option value="sjf">SJF (non-preemptive)</option>
+              <option value="srt">SRT (preemptive)</option>
+              <option value="rr">Round Robin</option>
+              <option value="mlfq">MLFQ (3-level)</option>
+              <option value="all">Compare all 5</option>
+            </select>
+          </div>
+          <div class="field" id="quantumField">
+            <label>Round Robin quantum</label>
+            <input type="number" id="quantum" min="1" value="2" />
+          </div>
+          <button class="primary" onclick="run()">RUN</button>
+        </div>
+        <div class="note">
+          MLFQ uses a fixed 3-level config per spec: Queue0 = RR(q=2), Queue1 =
+          RR(q=4), Queue2 = FCFS, with aging after 10 idle-in-queue ticks. The
+          quantum field above only applies to plain Round Robin.
+        </div>
+      </div>
+
+      <div class="panel" id="ganttPanel" style="display: none">
+        <div class="panel-title"><span id="ganttTitle">gantt chart</span></div>
+        <div class="gantt-scroll">
+          <div class="g-track" id="ganttTrack"></div>
+          <div class="g-ticks" id="ganttTicks"></div>
+        </div>
+        <div class="legend" id="ganttLegend"></div>
+      </div>
+
+      <div class="panel" id="metricsPanel" style="display: none">
+        <div class="panel-title"><span>metrics</span></div>
+        <table>
+          <thead>
+            <tr>
+              <th>PID</th>
+              <th>Arrival</th>
+              <th>Burst</th>
+              <th>Waiting</th>
+              <th>Turnaround</th>
+              <th>Response</th>
+            </tr>
+          </thead>
+          <tbody id="metricsBody"></tbody>
+        </table>
+        <div class="avg-line" id="avgLine"></div>
+      </div>
+
+      <div class="panel" id="comparePanel" style="display: none">
+        <div class="panel-title">
+          <span
+            >comparative analysis — average metrics across all algorithms</span
+          >
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Algorithm</th>
+              <th>Average Waiting</th>
+              <th>Average Turnaround</th>
+              <th>Average Response</th>
+            </tr>
+          </thead>
+          <tbody id="compareBody"></tbody>
+        </table>
+        <div class="note">
+          Lowest value per column is highlighted — useful directly for the
+          report's comparative analysis section.
+        </div>
+      </div>
+
+      <footer>
+        <a
+          href="https://github.com/SathyaPoch/OS-CPU-Scheduling-Team7"
+          target="_blank"
+          aria-label="GitHub Repository"
+        >
+          <i class="devicon-github-original"></i>
+        </a>
+        <p>Copyright &copy; 2026 SAO DALYINACO, POCH SATHYA, THAI MONIKA.</p>
+      </footer>
+    </div>
+
+    <script src="./js/models/process.js"></script>
+    <script src="./js/utils/calculation.js"></script>
+    <script src="./js/algorithms/fcfs.js"></script>
+    <script src="./js/algorithms/sjf.js"></script>
+    <script src="./js/algorithms/srt.js"></script>
+    <script src="./js/algorithms/rr.js"></script>
+    <script src="./js/algorithms/mlfq.js"></script>
+    <script src="./js/ui/table.js"></script>
+    <script src="./js/gantt.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
 </html>
