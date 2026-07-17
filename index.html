@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>CPU Algorithm Stimulator</title>
+    <title>CPU Algorithm Simulator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,25 +19,27 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
-    <div class="wrap">
+    <div id="invoice" class="wrap">
       <header>
-        <h1 class="bebas-neue-regular">CPU Stimulating Algorithm Calculator</h1>
+        <h1 class="bebas-neue-regular">CPU Simulator Algorithm Calculator</h1>
+        <button id="download-btn" class="header-btn">Export to PDF</button>
       </header>
 
       <div class="panel">
         <div class="panel-title">
-          <span>process table</span>
+          <span id="procTitle">process table</span>
           <span id="procCount">0 processes</span>
         </div>
         <table id="procTable">
           <thead>
             <tr>
-              <th>PID</th>
-              <th>Arrival</th>
-              <th>Burst</th>
+              <th>Process ID</th>
+              <th>Arrival Time</th>
+              <th>Burst Time</th>
               <th></th>
             </tr>
           </thead>
@@ -59,8 +61,8 @@
               <option value="sjf">SJF (non-preemptive)</option>
               <option value="srt">SRT (preemptive)</option>
               <option value="rr">Round Robin</option>
-              <option value="mlfq">MLFQ (3-level)</option>
-              <option value="all">Compare all 5</option>
+              <option value="mlfq">MLFQ (3 levels)</option>
+              <option value="all">Compare all Algorithms</option>
             </select>
           </div>
           <div class="field" id="quantumField">
@@ -69,10 +71,10 @@
           </div>
           <button class="primary" onclick="run()">RUN</button>
         </div>
-        <div class="note">
-          MLFQ uses a fixed 3-level config per spec: Queue0 = RR(q=2), Queue1 =
-          RR(q=4), Queue2 = FCFS, with aging after 10 idle-in-queue ticks. The
-          quantum field above only applies to plain Round Robin.
+        <div class="note" id="algoNote">
+          MLFQ uses a 3-level structures : (Queue 1: RR q=2, Queue 2: RR q=4,
+          Queue 3: FCFS). To prevent starvation, the aging mechanism triggers
+          once a process spends 10 ticks in an idle state.
         </div>
       </div>
 
@@ -105,9 +107,7 @@
 
       <div class="panel" id="comparePanel" style="display: none">
         <div class="panel-title">
-          <span
-            >comparative analysis — average metrics across all algorithms</span
-          >
+          <span>Compare All CPU Scheduling Algorithms Performance</span>
         </div>
         <table>
           <thead>
@@ -120,10 +120,7 @@
           </thead>
           <tbody id="compareBody"></tbody>
         </table>
-        <div class="note">
-          Lowest value per column is highlighted — useful directly for the
-          report's comparative analysis section.
-        </div>
+        <div class="avg-line" id="compareAvgLine"></div>
       </div>
 
       <footer>

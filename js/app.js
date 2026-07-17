@@ -1,9 +1,18 @@
 const ALGORITHMS = {
-  fcfs: { name: "FCFS", fn: (procs) => fcfs(procs) },
-  sjf: { name: "SJF (non-preemptive)", fn: (procs) => sjf(procs) },
-  srt: { name: "SRT (preemptive)", fn: (procs) => srt(procs) },
+  fcfs: { name: "First Come First Served", fn: (procs) => fcfs(procs) },
+  sjf: {
+    name: "Shortest Job First (non-preemptive)",
+    fn: (procs) => sjf(procs),
+  },
+  srt: {
+    name: "Shortest Remaining Time (preemptive)",
+    fn: (procs) => srt(procs),
+  },
   rr: { name: "Round Robin", fn: (procs, q) => roundRobin(procs, q) },
-  mlfq: { name: "MLFQ (3-level)", fn: (procs) => mlfq(procs) },
+  mlfq: {
+    name: "Multi-Level Feedback Queue (3-level)",
+    fn: (procs) => mlfq(procs),
+  },
 };
 
 function renderMetrics(result, processes) {
@@ -24,7 +33,7 @@ function renderMetrics(result, processes) {
   });
   document.getElementById("avgLine").innerHTML =
     n > 0
-      ? `avg waiting = <b>${(tw / n).toFixed(2)}</b> &nbsp; avg turnaround = <b>${(tt / n).toFixed(2)}</b> &nbsp; avg response = <b>${(tr / n).toFixed(2)}</b>`
+      ? `Average Waiting Time = <b>${(tw / n).toFixed(2)}</b> &nbsp; Average Turnaround Time = <b>${(tt / n).toFixed(2)}</b> &nbsp; Average Response Time S= <b>${(tr / n).toFixed(2)}</b>`
       : "";
   document.getElementById("metricsPanel").style.display = "block";
 }
@@ -64,13 +73,39 @@ function renderCompare(processes, quantum) {
     </tr>`,
     )
     .join("");
+
+  const totalAw = rows.reduce((sum, r) => sum + r.aw, 0);
+  const totalAt = rows.reduce((sum, r) => sum + r.at, 0);
+  const totalAr = rows.reduce((sum, r) => sum + r.ar, 0);
+  const count = rows.length;
+
+  document.getElementById("compareAvgLine").innerHTML =
+    count > 0
+      ? `Average Waiting Time = <b>${(totalAw / count).toFixed(2)}</b> &nbsp; Average Turnaround Time = <b>${(totalAt / count).toFixed(2)}</b> &nbsp; Average Response Time = <b>${(totalAr / count).toFixed(2)}</b>`
+      : "";
+
   document.getElementById("comparePanel").style.display = "block";
+}
+
+function updateAlgoNote(algoKey) {
+  const note = document.getElementById("algoNote");
+  const descriptions = {
+    fcfs: "The process which arrives first in the ready queue is firstly assigned the CPU.",
+    sjf: "Shortest Job First selects the process with the smallest burst time from the ready queue.",
+    srt: "Shortest Remaining Time preempts the current process when a shorter job arrives.",
+    rr: "Round Robin assigns each process a fixed quantum before moving it to the back of the queue.",
+    mlfq: "MLFQ uses a 3-level structure: (Queue 1: RR q=2, Queue 2: RR q=4, Queue 3: FCFS). To prevent starvation, the aging mechanism triggers once a process spends 10 ticks in an idle state.",
+    all: "Compare all algorithms to see average waiting time , turnaround time and response times.",
+  };
+
+  note.textContent = descriptions[algoKey] || "";
 }
 
 function updateQuantumVisibility() {
   const algoKey = document.getElementById("algoSelect").value;
   const quantumField = document.getElementById("quantumField");
   quantumField.style.display = algoKey === "rr" ? "flex" : "none";
+  updateAlgoNote(algoKey);
 }
 
 function run() {
@@ -99,7 +134,7 @@ function run() {
     renderCompare(processes, quantum);
     const result = ALGORITHMS.fcfs.fn(processes, quantum);
     document.getElementById("ganttTitle").textContent =
-      "gantt chart — FCFS (reference view)";
+      "gantt chart FCFS (reference view)";
     renderGantt(result, processes);
     renderMetrics(result, processes);
     return;
@@ -107,11 +142,36 @@ function run() {
 
   const { name, fn } = ALGORITHMS[algoKey];
   const result = fn(processes, quantum);
-  document.getElementById("ganttTitle").textContent = "gantt chart — " + name;
+  document.getElementById("ganttTitle").textContent = "gantt chart :" + name;
   renderGantt(result, processes);
   renderMetrics(result, processes);
 }
 
-document.getElementById("algoSelect").addEventListener("change", updateQuantumVisibility);
+const options = {
+  margin: 0.5,
+  filename: "CPU_Simulator.pdf",
+  image: { type: "jpeg", quality: 0.98 },
+  html2canvas: { scale: 2 },
+  jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+};
+
+const downloadBtn = document.getElementById("download-btn");
+downloadBtn.addEventListener("click", () => {
+  const element = document.getElementById("invoice");
+  downloadBtn.style.display = "none";
+  html2pdf()
+    .set(options)
+    .from(element)
+    .save()
+    .then(() => {
+      downloadBtn.style.display = "inline-block";
+    })
+    .catch(() => {
+      downloadBtn.style.display = "inline-block";
+    });
+});
+
+document
+  .getElementById("algoSelect")
+  .addEventListener("change", updateQuantumVisibility);
 updateQuantumVisibility();
-loadSample();

@@ -37,7 +37,7 @@ body {
 header {
   display: flex;
   align-items: baseline;
-  gap: 14px;
+  gap: 450px;
   margin-bottom: 18px;
   border-bottom: 1px solid var(--line);
   padding-bottom: 14px;
@@ -48,6 +48,28 @@ header h1 {
   margin: 0;
   color: var(--text);
   font-weight: 600;
+}
+header .header-btn {
+  background: var(--amber);
+  color: #111;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+header .header-btn:hover {
+  background: #f4b31d;
+  color: #111;
+  border-color: #e3a717;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 .bebas-neue-regular {
   font-family: "Bebas Neue", sans-serif;
@@ -246,12 +268,12 @@ button.primary:hover {
 .avg-line {
   margin-top: 12px;
   font-size: 13px;
-  color: var(--amber);
+  color: #000000;
   border-top: 1px dashed var(--line);
   padding-top: 10px;
 }
 .avg-line b {
-  color: var(--amber-soft);
+  color: #0f9015;
 }
 
 .empty {
@@ -261,7 +283,7 @@ button.primary:hover {
 }
 
 .cmp-best {
-  color: var(--amber);
+  color: #0f9015;
   font-weight: 700;
 }
 footer {

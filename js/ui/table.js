@@ -18,6 +18,7 @@ function updateCount() {
 
 function loadSample() {
   document.getElementById("procBody").innerHTML = "";
+  document.getElementById("procTitle").textContent = "Process Table";
   addRow("P1", 0, 5);
   addRow("P2", 1, 3);
   addRow("P3", 2, 8);
